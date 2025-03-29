@@ -11,7 +11,7 @@ A Streamlit application for automating messages to apartment listings on Kleinan
 ## Installation
 
 1. Clone this repository
-2. Install the requirements:
+2. Install the requirements: (Only for first time)
 
    **For Windows:**
    ```
