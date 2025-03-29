@@ -8,6 +8,7 @@ A Streamlit application for automating messages to apartment listings on Kleinan
 - **Information View**: View and filter all previously contacted listings
 - **Automatic Tracking**: The app tracks all contacted listings to avoid duplication
 - **Manual Login**: Secure login process through terminal input
+- **Customizable Messages**: Template-based messaging with dynamic name and city placeholders
 
 ## Installation
 
@@ -39,6 +40,27 @@ streamlit run app.py
 ```
 python3 -m streamlit run app.py
 ```
+
+### Customizing Message Template
+
+The application uses a template-based messaging system that automatically personalizes messages for each listing:
+
+1. Open the `message.txt` file in the project root directory
+2. Edit the message content as needed
+3. Use the following placeholders that will be automatically replaced:
+   - `{name}` - Will be replaced with the listing owner's name
+   - `{city}` - Will be replaced with the city name you specify in the app
+
+Example message template:
+```
+Hallo {name},
+
+Nur ein Tipp von mir, der mir geholfen hat, in zwei Wochen eine Wohnung in {city} zu finden. Ich habe die Internetseite Immohero24.com benutzt. Ich kann dir nur empfehlen, sie auszuprobieren. Viel Glück beim Suchen!
+
+~ Felix. M
+```
+
+When processed, this template will insert the ad owner's name and your specified city automatically.
 
 ### Manual Login Process
 
