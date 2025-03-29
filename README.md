@@ -7,6 +7,7 @@ A Streamlit application for automating messages to apartment listings on Kleinan
 - **Bulk Message Sending**: Send messages to multiple apartment listings from different search URLs
 - **Information View**: View and filter all previously contacted listings
 - **Automatic Tracking**: The app tracks all contacted listings to avoid duplication
+- **Manual Login**: Secure login process through terminal input
 
 ## Installation
 
@@ -38,6 +39,15 @@ streamlit run app.py
 ```
 python3 -m streamlit run app.py
 ```
+
+### Manual Login Process
+
+When you start the scraper:
+1. A Chrome browser window will open with Kleinanzeigen login page
+2. A prompt will appear in your terminal (command prompt/PowerShell/Terminal)
+3. Log in to your account in the browser window
+4. After successful login, return to the terminal and press Enter
+5. The scraping process will continue automatically
 
 ### Bulk Message Sender
 

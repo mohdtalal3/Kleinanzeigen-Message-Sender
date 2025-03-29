@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import time
 import os
+import sys
+from datetime import datetime
 from seleniumbase import SB
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
@@ -13,6 +15,21 @@ st.set_page_config(
     page_icon="📨",
     layout="wide"
 )
+
+def wait_for_login(sb):
+    """Open login page and wait for manual login"""
+    sb.open("https://www.kleinanzeigen.de/")
+    print("\n" + "="*50)
+    print("MANUAL LOGIN REQUIRED")
+    print("="*50)
+    print("1. Please log in to your Kleinanzeigen account in the browser window")
+    print("2. After you have successfully logged in, press Enter in this terminal")
+    print("="*50)
+    
+    # Wait for user to press Enter in terminal
+    input("Press Enter after you have logged in...")
+
+    return True
 
 def run_scraper(urls_and_cities):
     """Run the scraper for multiple URLs and cities"""
@@ -34,8 +51,18 @@ def run_scraper(urls_and_cities):
     full_path = os.path.abspath("chromedata1")
     extension_dir = os.path.join(os.getcwd(), 'extension')
     try:
-
-        with SB(uc=True, user_data_dir=full_path, headless=False,extension_dir=extension_dir) as sb:
+        with SB(uc=True, user_data_dir=full_path, headless=False, extension_dir=extension_dir) as sb:
+            # Handle login first
+            status_placeholder.info("Waiting for manual login. Please check your terminal...")
+            login_success = wait_for_login(sb)
+            
+            if not login_success:
+                status_placeholder.error("Login failed. Please try again.")
+                return
+            
+            status_placeholder.success("Login successful! Starting scraping process...")
+            time.sleep(2)  # Short pause to let user see the message
+            
             for idx, (url, city) in enumerate(urls_and_cities):
                 if not url or not city:
                     continue
