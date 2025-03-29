@@ -53,6 +53,7 @@ def run_scraper(urls_and_cities):
     try:
         with SB(uc=True, user_data_dir=full_path, headless=False, extension_dir=extension_dir) as sb:
             # Handle login first
+            sb.maximize_window()
             status_placeholder.info("Waiting for manual login. Please check your terminal...")
             login_success = wait_for_login(sb)
             
@@ -120,7 +121,7 @@ def process_page(sb, city, processed_ads, status_placeholder):
     """Process a single page of ads"""
     processed_count = 0
     skipped_count = 0
-    
+
     # Use both selectors to handle potential changes in the website
     ad_selectors = [
         "#srchrslt-adtable a.ellipsis"
@@ -182,11 +183,13 @@ def process_page(sb, city, processed_ads, status_placeholder):
                     save_ad_data(ad_id, name, href, city)
                     processed_count += 1
                     
+                    
                 except Exception as e:
                     status_placeholder.error(f"Error contacting ad: {str(e)}")
                 
                 sb.driver.close()
                 sb.switch_to_window(0)
+                time.sleep(4)
             except Exception as e:
                 status_placeholder.error(f"Error processing ad {ad_id}: {str(e)}")
                 # Try to return to main window if there was an error
