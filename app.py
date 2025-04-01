@@ -3,6 +3,7 @@ import pandas as pd
 import time
 import os
 import sys
+import random
 from datetime import datetime
 from seleniumbase import SB
 from selenium.webdriver.common.keys import Keys
@@ -15,6 +16,11 @@ st.set_page_config(
     page_icon="📨",
     layout="wide"
 )
+
+def random_sleep(min_seconds, max_seconds):
+    """Sleep for a random time between min and max seconds"""
+    sleep_time = random.uniform(min_seconds, max_seconds)
+    time.sleep(sleep_time)
 
 def wait_for_login(sb):
     """Open login page and wait for manual login"""
@@ -31,7 +37,7 @@ def wait_for_login(sb):
 
     return True
 
-def run_scraper(urls_and_cities):
+def run_scraper(urls_and_cities, sleep_config):
     """Run the scraper for multiple URLs and cities"""
     if not urls_and_cities:
         st.error("No URLs provided!")
@@ -80,7 +86,7 @@ def run_scraper(urls_and_cities):
                 
                 while True:
                     status_placeholder.info(f"Processing URL {idx+1}/{len(urls_and_cities)}: Page {page_num}")
-                    processed, skipped = process_page(sb, city, processed_ads, status_placeholder)
+                    processed, skipped = process_page(sb, city, processed_ads, status_placeholder, sleep_config)
                     total_processed += processed
                     total_skipped += skipped
                     
@@ -117,7 +123,7 @@ def run_scraper(urls_and_cities):
             
     return results
             
-def process_page(sb, city, processed_ads, status_placeholder):
+def process_page(sb, city, processed_ads, status_placeholder, sleep_config):
     """Process a single page of ads"""
     processed_count = 0
     skipped_count = 0
@@ -182,14 +188,18 @@ def process_page(sb, city, processed_ads, status_placeholder):
                     # Save the processed ad data
                     save_ad_data(ad_id, name, href, city)
                     processed_count += 1
-                    
+                    time.sleep(4)
+                    # Random sleep between messages
+
                     
                 except Exception as e:
                     status_placeholder.error(f"Error contacting ad: {str(e)}")
                 
                 sb.driver.close()
                 sb.switch_to_window(0)
-                time.sleep(4)
+                if sleep_config['enabled']:
+                    status_placeholder.info(f"Waiting {sleep_config['min']}-{sleep_config['max']} seconds before next message...")
+                    random_sleep(sleep_config['min'], sleep_config['max'])
             except Exception as e:
                 status_placeholder.error(f"Error processing ad {ad_id}: {str(e)}")
                 # Try to return to main window if there was an error
@@ -326,6 +336,29 @@ def display_bulk_message():
     The system will send messages to all ads in these URLs and track which ones have been processed.
     """)
     
+    # Sleep configuration
+    st.subheader("Message Delay Settings")
+    sleep_enabled = st.checkbox("Enable random delay between messages", value=True)
+    
+    if sleep_enabled:
+        col1, col2 = st.columns(2)
+        with col1:
+            min_sleep = st.number_input("Minimum delay (seconds)", min_value=1, max_value=60, value=4)
+        with col2:
+            max_sleep = st.number_input("Maximum delay (seconds)", min_value=min_sleep, max_value=120, value=8)
+        
+        sleep_config = {
+            'enabled': True,
+            'min': min_sleep,
+            'max': max_sleep
+        }
+    else:
+        sleep_config = {
+            'enabled': False,
+            'min': 0,
+            'max': 0
+        }
+    
     # Initialize session state for URL fields
     if "url_fields" not in st.session_state:
         st.session_state.url_fields = [{"url": "", "city": ""}]
@@ -364,7 +397,7 @@ def display_bulk_message():
         urls_and_cities = [(field["url"], field["city"]) for field in st.session_state.url_fields if field["url"]]
         if urls_and_cities:
             with st.spinner("Running scraper..."):
-                run_scraper(urls_and_cities)
+                run_scraper(urls_and_cities, sleep_config)
         else:
             st.error("No URLs provided!")
 

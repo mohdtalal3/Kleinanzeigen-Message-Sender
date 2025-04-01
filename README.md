@@ -9,6 +9,7 @@ A Streamlit application for automating messages to apartment listings on Kleinan
 - **Automatic Tracking**: The app tracks all contacted listings to avoid duplication
 - **Manual Login**: Secure login process through terminal input
 - **Customizable Messages**: Template-based messaging with dynamic name and city placeholders
+- **Random Delays**: Configurable random delays between messages to avoid detection
 
 ## Installation
 
@@ -62,6 +63,17 @@ Nur ein Tipp von mir, der mir geholfen hat, in zwei Wochen eine Wohnung in {city
 
 When processed, this template will insert the ad owner's name and your specified city automatically.
 
+### Message Delay Settings
+
+To avoid detection and make the messaging pattern more natural, you can configure random delays between messages:
+
+1. In the "Bulk Message Sender" section, find the "Message Delay Settings"
+2. Enable/disable random delays using the checkbox
+3. If enabled, set:
+   - Minimum delay (1-60 seconds)
+   - Maximum delay (must be greater than minimum, up to 120 seconds)
+4. The system will wait for a random time between these values after each message
+
 ### Manual Login Process
 
 When you start the scraper:
@@ -74,9 +86,10 @@ When you start the scraper:
 ### Bulk Message Sender
 
 1. Select "Bulk Message" from the sidebar
-2. Enter the search URLs and city names
-3. Click the "+" button to add more URLs
-4. Click "Run Scraper" to start the process
+2. Configure message delay settings (optional)
+3. Enter the search URLs and city names
+4. Click the "+" button to add more URLs
+5. Click "Run Scraper" to start the process
 
 ### Information View
 
